@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+
+	<!-- ======================AOP Proxy configuration ====================== -->
+	<context:annotation-config />
+	<aop:aspectj-autoproxy />    
+	<!-- ======================AOP Proxy configuration ====================== -->
+
+	
+	<!-- ==================Spring Transaction Configuration==================== -->
+	<bean id="transactionManager"
+		  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+
+		  <property name="dataSource" ref="hikariDataSource"/>
+
+	</bean>
+
+	<tx:annotation-driven />
+
+	<!-- ==================Spring Transaction Configuration==================== -->
+
+	<!-- HikariCP를 사용하기 위한 설정  -->
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<description>HikariCP Configuration</description>
+
+		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
+		<property name="jdbcUrl"
+		value="jdbc:log4jdbc:oracle:thin:@db202106301639_high?TNS_ADMIN=C:/OPT/OracleCloudWallet/ATP/" />
+		
+		<property name="username" value="ADMIN"/>
+		<property name="password" value="Qlxmzoavm125"/>
+  
+		<property name="maximumPoolSize" value="10"/>
+		<property name="minimumIdle" value="2"/>
+		<property name="idleTimeout" value="10000"/>
+		<property name="connectionTimeout" value="1000"/>
+		<property name="connectionTestQuery" value="SELECT 1 FROM dual"/>
+		<property name="dataSourceJNDI" value="jdbc/HikariCP"/>
+	 </bean>
+  
+	 <bean id="hikariDataSource" 
+		  class="com.zaxxer.hikari.HikariDataSource"
+		  destroy-method="close">
+		<description>HikariCP DataSource</description>
+  
+		<constructor-arg ref="hikariConfig"/>
+	 </bean>
+
+	 <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="hikariDataSource"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+
+		<!-- <property name="mapperLocation" value="classpath:mappers/**/*Mapper.xml"></property> -->
+	 </bean>
+
+	 <!-- mybatis mapper package  -->
+	 <mybatis-spring:scan base-package="com.korea.gfair.mapper" />
+
+	 <!-- Service Layer -->
+	 <context:component-scan base-package="com.korea.gfair.service" />
+	 <!-- Persistence Layer -->
+	 <context:component-scan base-package="com.korea.gfair.persistence" /> 
+	 
+</beans>
