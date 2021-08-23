@@ -7,7 +7,9 @@
 
 <configuration>
 	<mappers>
-      
+       <mapper resource="mappers/boardMapper.xml"/>
+       <mapper resource="mappers/BoardReplyMapper.xml"/>
+       <mapper resource="mappers/UploadFileMapper.xml"/>
     </mappers>
 
 </configuration>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.myapp.mappers.UploadFileMapper">
+    <insert id="insert" >
+        <selectKey keyProperty="fid" order="BEFORE" resultType="int">
+            
+            <![CDATA[ 
+            SELECT 
+                "HR"."ISEQ$$_114067".nextval
+            FROM
+                dual
+            ]]>
+        </selectKey>
+        <![CDATA[ 
+            INSERT INTO
+                tbl_uploadfile(
+                  fid, frename, fpath, forname)
+            VALUES
+                (#{fid}, #{frename}, #{fpath}, #{forname})
+        ]]>
+    </insert>
+
+    <delete id="delete">
+        <![CDATA[ 
+            DELETE FROM 
+                tbl_uploadfile
+            WHERE
+                fid = #{fid}
+        ]]>
+    </delete>
+
+    <update id="modify">
+        <![CDATA[ 
+            UPDATE
+                tbl_uploadfile
+            SET
+                frename = #{frename}, 
+                fpath = #{fpath}, 
+                forname = #{forname}
+            WHERE 
+                fid = #{fid}
+        ]]>
+    </update>
+
+    <select id="fileByFid" resultType="org.zerock.myapp.domain.UploadFileVO">
+        <![CDATA[ 
+            SELECT
+                *
+            FROM
+                tbl_uploadfile
+            WHERE    
+                fid = #{fid}
+        
+        ]]>
+    </select>
+
+</mapper>
