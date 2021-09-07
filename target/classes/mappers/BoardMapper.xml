@@ -5,8 +5,8 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="org.zerock.myapp.mappers.BoardAnonymousMapper">
-    <select id="list" resultType="org.zerock.myapp.domain.BoardVO">
+<mapper namespace="BoardMapper">
+    <select id="list" resultType="com.korea.gfair.domain.BoardVO">
         <![CDATA[ 
             SELECT
             /*+ INDEX_DESC(tbl_board)*/
@@ -43,7 +43,7 @@
         
     </select>
 
-    <select id="select" resultType="org.zerock.myapp.domain.BoardVO">
+    <select id="select" resultType="com.korea.gfair.domain.BoardVO">
         <![CDATA[ 
         SELECT
         /*+ INDEX_DESC(tbl_board)*/
@@ -55,12 +55,12 @@
         ]]>
     </select>
 
-    <insert id="insert" >
+    <insert id="insert">
         <selectKey keyProperty="bno" order="BEFORE" resultType="int">
             
             <![CDATA[ 
             SELECT 
-                "HR"."ISEQ$$_114085".nextval
+                ISEQ$$_103239.nextval
             FROM
                 dual
             ]]>
@@ -76,8 +76,8 @@
                                     notice_tf, 
                                     public_tf, 
                                     reply_tf)
-            VALUES ( #{bno},
-                    "HR"."ISEQ$$_114085".currval, 
+            VALUES (#{bno},
+                    #{bno}, 
                     #{title}, 
                     #{content}, 
                     #{memberid}, 
@@ -148,7 +148,7 @@
         <![CDATA[ 
             UPDATE tbl_board
             SET 
-                readcnt = ${readcnt+1}
+                readcnt = readcnt+1
             WHERE
                 bno = #{bno}
         ]]>
@@ -193,4 +193,4 @@
                     #{reply_tf})
         ]]>
     </insert>
-</mapper>
+</mapper> 
