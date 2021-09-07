@@ -13,6 +13,9 @@
        <mapper resource="mappers/MyPageMapper.xml"/>
        <mapper resource="mappers/ApplyMapper.xml"/>
        <mapper resource="mappers/AdminMapper.xml"/>
+       <mapper resource="mappers/MemberMapper.xml"/>
+       <mapper resource="mappers/MyBoardMapper.xml"/>
+       <mapper resource="mappers/ExhibitionMapper.xml"/>
     </mappers>
 
 </configuration>
