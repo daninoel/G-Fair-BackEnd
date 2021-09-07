@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="ApplyMapper">
+	<select id="selectMemberInfo" resultType="com.korea.gfair.domain.MemberVO">
+	
+		SELECT
+			mno,
+			memberId, 
+			memberPw, 
+			memberName, 
+			memberAddress,
+			phone,
+			email,
+			cbno,
+			fid,
+			signdate,
+			drop_tf,
+			dropDate,
+			memberType
+		FROM 
+			tbl_member
+		WHERE
+			memberid=#{memberid}
+	</select>
+	
+	<select id="selectBooth" resultType="com.korea.gfair.domain.BoothVO">
+		SELECT 
+			btno, bttype, btprice, btisselected
+		FROM 
+			tbl_booth
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tbl_apply(
+				cbno,
+				fid,
+				applycompany,
+				phone,
+				email,
+				memberid,
+				applyname,
+				btno
+				)
+		VALUES(
+			#{cbno},
+			#{fid},
+			#{applycompany},
+			#{phone},
+			#{email},
+			#{memberid},
+			#{applyname},
+			#{btno}
+		)
+	</insert>
+	
+	<update id="updateBooth">
+		UPDATE tbl_booth
+		SET btisselected = 'T'
+		WHERE btno =#{btno}
+	</update>
+	
+	<select id="selectApplyInfo" resultType="com.korea.gfair.domain.ApplyVO">
+		SELECT
+			/*+ index_desc(tbl_apply) */
+			applyno,
+			cbno,
+			fid,
+			applycompany,
+			phone,
+			email,
+			memberid,
+			payment_tf,
+			agrstate_tf,
+			applyname,
+			pno,
+			btno
+		FROM 
+			tbl_apply
+		WHERE 
+			memberid= #{memberid}
+	
+	</select>
+	
+	<select id="selectExhibition" resultType="com.korea.gfair.domain.ExhibitionVO">
+		<![CDATA[
+			SELECT  
+	    		exno, 
+	    		exname, 
+	    		exstart,
+	    		exend, 
+	    		excontent, 
+	    		exinsert, 
+	    		exupdate
+			FROM 
+				tbl_EXHIBITION
+			WHERE 
+			    exstart > sysdate
+		 ]]>
+	</select>
+	
+	<select id="selectPaymentInfo" resultType="com.korea.gfair.domain.PaymentVO">
+		SELECT 
+			pno,
+			btprice,
+			pdate,
+			pstatus,
+			applyno,
+			btno
+		FROM tbl_payment
+		WHERE applyno = #{applyno}
+	</select>
+</mapper>

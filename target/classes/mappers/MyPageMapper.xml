@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="MyPageMapper">
+	<update id="updatePassword">
+		UPDATE tbl_member
+		SET memberpw= #{memberpw}
+		WHERE memberid =#{memberid}
+	</update>
+	
+	<select id="selectEmail" resultType="com.korea.gfair.domain.MemberVO">
+		SELECT *
+		FROM tbl_member
+		WHERE memberid=#{memberid}
+	</select>
+	
+	<update id="updateDrop">
+		UPDATE tbl_member
+		SET drop_tf = 'T'
+		WHERE memberid=#{memberid}
+	</update>
+	
+	<select id="selectJoinReply" resultType="com.korea.gfair.domain.BoardReplyJoinVO">
+		SELECT 
+			B.bname,
+			B.bno, 
+			R.reno, 
+			R.recontent,
+			R.memberid, 
+			R.redate
+		FROM tbl_board B
+		INNER JOIN tbl_reply R ON B.bno = R.bno
+		WHERE R.memberid =#{memberid}
+		
+		<if test="bname != null">
+			AND B.bname =#{bname}
+		</if>
+		
+	   <choose>
+             <when test="type eq 'C'.toString()">
+                 AND recontent LIKE '%'||#{keyWord}||'%'
+             </when>
+        </choose>
+		
+		 <![CDATA[ 
+          ORDER BY R.redate DESC
+          OFFSET
+              (#{currPage} - 1)*#{amount} ROWS
+          FETCH NEXT #{amount} ROWS ONLY    
+            
+        ]]>
+	</select>
+	
+	<select id="replyTotalCount" resultType="int">
+		SELECT count(reno)
+		FROM tbl_reply
+		WHERE memberid=#{memberid}
+		
+		<choose>
+            <when test="type eq 'C'.toString()">
+                AND recontent LIKE '%'||#{keyWord}||'%'
+            </when>
+	    </choose>
+	</select>
+	
+	<delete id="deleteReply">
+		DELETE FROM 
+				tbl_reply 
+		WHERE reno IN 
+		<foreach collection="list" item="reno" open="(" close=")" separator=",">
+			#{reno}
+		</foreach>
+	</delete>
+</mapper>

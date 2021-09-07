@@ -5,8 +5,8 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<mapper namespace="org.zerock.myapp.mappers.BoardReplyMapper">
-    <select id="replyList" resultType="org.zerock.myapp.domain.ReplyVO">
+<mapper namespace="BoardReplyMapper">
+    <select id="replyList" resultType="com.korea.gfair.domain.ReplyVO">
         <![CDATA[ 
             SELECT
                 /*+ INDEX(tbl_reply)*/

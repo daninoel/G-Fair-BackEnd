@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="AdminMapper">
+	<select id="selectApply" resultType="com.korea.gfair.domain.ApplyVO">
+		SELECT
+			/*+ index_desc(tbl_apply) */
+			applyno,
+			cbno,
+			fid,
+			applycompany,
+			phone,
+			email,
+			memberid,
+			payment_tf,
+			agrstate_tf,
+			applyname,
+			pno,
+			btno
+		FROM 
+			tbl_apply
+	</select>
+	
+	<update id="updateApplyAgreeStatus">
+		UPDATE  tbl_apply
+		SET agrstate_tf ='T'
+		WHERE applyno IN 
+		
+		<foreach collection="list" item="applyno" open="(" close=")" separator=",">
+			#{applyno}
+		</foreach>
+		
+	</update>
+	
+	<insert id="insertPayment">
+		INSERT INTO 
+			tbl_payment(btprice,btno,applyno)
+		SELECT 
+			b.btprice, b.btno, a.applyno
+		FROM 
+			tbl_booth b 
+		INNER JOIN 
+			tbl_apply a ON a.btno = b.btno
+		WHERE a.applyno IN 
+		
+		<foreach collection="list" item="applyno" open="(" close=")" separator=",">
+			#{applyno}
+		</foreach>
+		
+	</insert>
+	
+	<update id="updateApplyPno">
+		
+		UPDATE 
+			tbl_apply a
+		SET pno = 
+			(	SELECT 
+					p.pno 
+				FROM 
+					tbl_payment p 
+				WHERE a.applyno = p.applyno)
+		WHERE applyno IN
+		
+		<foreach collection="list" item="applyno" open="(" close=")" separator=",">
+			#{applyno}
+		</foreach>
+	
+	</update>
+	
+	<update id="UpdatePaymentPstatus">
+		UPDATE tbl_payment
+		SET pstatus ='완료'
+		WHERE applyno IN 
+		
+		<foreach collection="list" item="applyno" open="(" close=")" separator=",">
+			#{applyno}
+		</foreach>
+	
+	</update>
+	
+	<update id="UpdateApplyPaymentTF">
+		UPDATE tbl_apply
+		SET payment_tf='T'
+		WHERE applyno IN 
+		
+		<foreach collection="list" item="applyno" open="(" close=")" separator=",">
+			#{applyno}
+		</foreach>
+	
+	</update>
+</mapper>
