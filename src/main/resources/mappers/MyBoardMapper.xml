@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="myBoardMapper">
+    <select id="list" resultType="com.korea.gfair.domain.BoardReplyCountVO">
+        <![CDATA[ 
+            SELECT
+            /*+ INDEX_DESC(tbl_board)*/
+                b.bno,
+                b.reproot,
+                b.repstep,
+                b.repindent,
+                b.title,
+                b.content,
+                b.memberid,
+                b.insert_ts,
+                b.update_ts,
+                b.readcnt,
+                b.bname,
+                b.fid,
+                b.public_tf,
+                count(r.reno) AS renoCount
+            FROM
+                tbl_board b
+            LEFT OUTER JOIN
+                tbl_reply r
+            ON
+                b.bno = r.bno
+            WHERE
+                b.memberid = #{memberid}
+        ]]>
+        
+        <choose>
+            <when test="type eq 'T'.toString()">
+                AND title LIKE '%'||#{keyWord}||'%'
+            </when>
+            <when test="type eq 'C'.toString()">
+                AND content LIKE '%'||#{keyWord}||'%'
+            </when>
+            <when test="type eq 'TC'.toString()">
+                AND (content LIKE '%'||#{keyWord}||'%'
+                    OR title LIKE '%'||#{keyWord}||'%')
+            </when>
+        </choose>
+         
+        <if test="bname != null and bname != ''">
+            AND bname = #{bname}
+        </if>
+        
+        <![CDATA[ 
+            GROUP BY
+                (b.bno,
+                b.reproot,
+                b.repstep,
+                b.repindent,
+                b.title,
+                b.content,
+                b.memberid,
+                b.insert_ts,
+                b.update_ts,
+                b.readcnt,
+                b.bname,
+                b.fid,
+                b.public_tf)
+            ORDER BY
+                insert_ts desc
+            OFFSET 
+                (#{currPage}-1)*#{amount} ROWS
+            FETCH NEXT #{amount}ROWS ONLY
+        ]]>
+    </select>
+
+    <select id="totalCount" resultType="int">
+        <![CDATA[ 
+            SELECT
+                count(bno)
+            FROM
+                tbl_board
+            WHERE
+                memberid = #{memberid}
+        ]]>
+        <choose>
+            <when test="type eq 'T'.toString()">
+                AND title LIKE '%'||#{keyWord}||'%'
+            </when>
+            <when test="type eq 'C'.toString()">
+                AND content LIKE '%'||#{keyWord}||'%'
+            </when>
+            <when test="type eq 'TC'.toString()">
+                AND (content LIKE '%'||#{keyWord}||'%'
+                    OR title LIKE '%'||#{keyWord}||'%')
+            </when>
+           
+        </choose>
+        
+        <if test="bname != null and bname != ''">
+            AND bname = #{bname}
+        </if>
+    </select>
+
+    <delete id="delete">
+        <![CDATA[ 
+        DELETE FROM 
+            tbl_board
+        WHERE 
+            memberid = #{memberid}
+            AND bno in
+        ]]>
+        <foreach item="bno" collection="bnoList" open="(" separator="," close=")">
+            #{bno}
+        </foreach>
+    </delete>
+
+</mapper>

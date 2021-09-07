@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="exhibitionMapper">
+    <select id="visitList" resultType="com.korea.gfair.domain.ExhibitionVO">
+        <![CDATA[ 
+            SELECT
+            /*+INDEX_DESC(tbl_exhibition) */
+                *
+            FROM
+                tbl_exhibition
+        ]]>
+    </select>
+
+    <select id="exPagingList" resultType="com.korea.gfair.domain.ExhibitionVO">
+        <![CDATA[ 
+            SELECT
+            /*+INDEX_DESC(tbl_exhibition)*/
+                *
+            FROM
+                tbl_exhibition
+        ]]>
+        <where>
+            <choose>
+                <when test="type eq 'T'.toString()">
+                    exname LIKE '%'||#{keyWord}||'%'
+                </when>
+                <when test="type eq 'C'.toString()">
+                    excontent LIKE '%'||#{keyWord}||'%'
+                </when>
+                <when test="type eq 'TC'.toString()">
+                    (content LIKE '%'||#{keyWord}||'%'
+                    OR exname LIKE '%'||#{keyWord}||'%')
+                </when>
+            </choose>
+        </where>
+        <![CDATA[
+            OFFSET 
+                (#{currPage}-1)*#{amount} ROWS
+            FETCH NEXT #{amount}ROWS ONLY
+        ]]>
+
+    </select>
+
+    <select id="schedule" resultType="com.korea.gfair.domain.ExhibitionVO">
+        <![CDATA[ 
+            SELECT
+                *
+            FROM
+                tbl_exhibition
+            WHERE
+                exno = #{exno}
+        ]]>
+    </select>
+
+    <insert id="insert">
+        <![CDATA[ 
+            INSERT INTO
+                tbl_exhibition(
+                    exname,
+                    exstart,
+                    exend,
+                    excontent,
+                    exupdate
+                    )
+            VALUES
+                (#{exname},
+                #{exstart},
+                #{exend},
+                #{excontent},
+                null)
+        ]]>
+    </insert>
+
+    <update id="update">
+        <![CDATA[ 
+            UPDATE
+                tbl_exhibition
+            SET
+                exname = #{exname},
+                exstart = #{exstart},
+                exend = #{exend},
+                excontent = #{excontent},
+                exupdate = sysdate
+            WHERE
+                exno = #{exno}
+        ]]>
+    </update>
+
+    <delete id="delete">
+        <![CDATA[ 
+            DELETE FROM 
+                tbl_exhibition
+            WHERE
+                exno IN
+        ]]>
+        <foreach item="exno" collection="exnoList" open="(" separator="," close=")">
+            #{exno}
+        </foreach>       
+    </delete>
+
+    <select id="totalCount" resultType="int">
+        <![CDATA[ 
+            SELECT
+                count(exno)
+            FROM
+                tbl_exhibition
+        ]]>
+        <where>
+            <choose>
+                <when test="type eq 'T'.toString()">
+                    exname LIKE '%'||#{keyWord}||'%'
+                </when>
+                <when test="type eq 'C'.toString()">
+                    excontent LIKE '%'||#{keyWord}||'%'
+                </when>
+                <when test="type eq 'TC'.toString()">
+                    (content LIKE '%'||#{keyWord}||'%'
+                    OR exname LIKE '%'||#{keyWord}||'%')
+                </when>
+            </choose>
+        </where>
+    </select>
+</mapper>
