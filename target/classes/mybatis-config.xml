@@ -10,6 +10,9 @@
        <mapper resource="mappers/boardMapper.xml"/>
        <mapper resource="mappers/BoardReplyMapper.xml"/>
        <mapper resource="mappers/UploadFileMapper.xml"/>
+       <mapper resource="mappers/MyPageMapper.xml"/>
+       <mapper resource="mappers/ApplyMapper.xml"/>
+       <mapper resource="mappers/AdminMapper.xml"/>
     </mappers>
 
 </configuration>
